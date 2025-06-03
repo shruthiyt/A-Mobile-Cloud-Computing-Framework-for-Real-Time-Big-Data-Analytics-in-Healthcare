@@ -1,35 +1,50 @@
+import { HelloWave } from "@/components/HelloWave";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Axios from "axios";
+import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import {
-  Image,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
   Alert,
-  View,
-  Text,
+  Image,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  ActivityIndicator,
 } from "react-native";
-import { useEffect, useState } from "react";
-import { HelloWave } from "@/components/HelloWave";
-import Axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
 
-const apiUrl = process.env.EXPO_PUBLIC_URL;
+const apiUrl = "https://backendflask-441120.uc.r.appspot.com";
 
 export default function HomeScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    AsyncStorage.getItem("token").then((token) => {
-      if (token) {
-        router.push("/");
+    const checkToken = async () => {
+      const token = await AsyncStorage.getItem("healthToken");
+      if (!token) {
+        router.replace("/auth/");
+        setLoading(false);
+      } else {
+        setLoading(false);
       }
-    });
+    };
+    checkToken();
   }, []);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size={"large"} color={"black"} />
+      </View>
+    );
+  }
 
   const loginFunc = async () => {
     if (!email) {
@@ -52,12 +67,19 @@ export default function HomeScreen() {
       password,
     })
       .then((res) => {
-        AsyncStorage.setItem("token", res.data.access_token);
+        console.log(res);
+        AsyncStorage.setItem("healthToken", res.data.access_token);
         console.log(res.data.access_token);
         router.push("/");
       })
       .catch((err) => {
-        console.error(err);
+        if (err.response.status === 401) {
+          Alert.alert(
+            "Invalid credentials!",
+            "Please check your email and password!",
+            [{ text: "OK" }]
+          );
+        }
       });
   };
 

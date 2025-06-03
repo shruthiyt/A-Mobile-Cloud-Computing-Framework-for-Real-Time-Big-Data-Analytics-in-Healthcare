@@ -1,9 +1,35 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
-import React from "react";
 import { useRouter } from "expo-router";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ActivityIndicator,
+} from "react-native";
+import { useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Home = () => {
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    AsyncStorage.getItem("healthToken").then((token) => {
+      if (!token) {
+        router.replace("/auth/");
+      } else {
+        setLoading(false);
+      }
+    });
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size={"large"} color={"black"} />
+      </View>
+    );
+  }
   return (
     <View style={styles.container}>
       <View

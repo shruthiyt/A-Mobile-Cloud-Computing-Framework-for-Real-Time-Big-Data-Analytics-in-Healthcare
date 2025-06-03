@@ -1,20 +1,21 @@
-import {
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  TextInput,
-  Alert,
-  View,
-  Text,
-} from "react-native";
 import { HelloWave } from "@/components/HelloWave";
-import { useEffect, useState } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView } from "react-native";
-import Axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Axios from "axios";
 import { useRouter } from "expo-router";
-
-const apiUrl = process.env.EXPO_PUBLIC_URL;
+import { useEffect, useState } from "react";
+import {
+  Alert,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+const apiUrl = "https://backendflask-441120.uc.r.appspot.com";
 
 export default function TabTwoScreen() {
   const [email, setEmail] = useState("");
@@ -23,7 +24,7 @@ export default function TabTwoScreen() {
   const router = useRouter();
 
   useEffect(() => {
-    AsyncStorage.getItem("token").then((token) => {
+    AsyncStorage.getItem("healthToken").then((token) => {
       if (token) {
         router.push("/");
       }
@@ -58,10 +59,29 @@ export default function TabTwoScreen() {
       password,
     })
       .then((res) => {
+        if (res.status === 201) {
+          Alert.alert("Account created!", "Your account has been created!", [
+            { text: "OK", onPress: () => router.push("/auth/") },
+          ]);
+        }
+        console.log(res.status);
         console.log(res.data);
       })
       .catch((err) => {
-        console.error(err);
+        if (err.response && err.response.status === 409) {
+          Alert.alert(
+            "Signup Failed",
+            "A user with this email already exists. Please choose a different email or login instead.",
+            [{ text: "OK" }]
+          );
+        } else {
+          console.error(err);
+          Alert.alert(
+            "Error",
+            "An unexpected error occurred. Please try again.",
+            [{ text: "OK" }]
+          );
+        }
       });
   };
 

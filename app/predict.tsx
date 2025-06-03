@@ -1,22 +1,21 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { Picker } from "@react-native-picker/picker";
+import Axios from "axios";
+import { useRouter } from "expo-router";
+import { useState } from "react";
 import {
+  Alert,
+  Modal,
+  ScrollView,
   StyleSheet,
   Text,
-  View,
-  ScrollView,
   TextInput,
-  Alert,
   TouchableOpacity,
-  Modal,
+  View,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import React, { useState } from "react";
-import Axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
 
-const apiUrl = process.env.EXPO_PUBLIC_URL;
-
+const apiUrl = "https://backendflask-441120.uc.r.appspot.com";
 const Predict = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -142,7 +141,7 @@ const Predict = () => {
 
     console.log("Data: ", data);
 
-    const token = await AsyncStorage.getItem("token");
+    const token = await AsyncStorage.getItem("healthToken");
     if (!token) {
       router.replace("/auth/");
       return;
@@ -194,9 +193,8 @@ const Predict = () => {
           onValueChange={setGender}
         >
           <Picker.Item label="Select gender" value="" />
-          <Picker.Item label="Male" value="male" />
-          <Picker.Item label="Female" value="female" />
-          <Picker.Item label="Other" value="other" />
+          <Picker.Item label="Male" value="0" />
+          <Picker.Item label="Female" value="1" />
         </Picker>
       </View>
 
@@ -208,35 +206,48 @@ const Predict = () => {
           onValueChange={setBloodType}
         >
           <Picker.Item label="Select blood type" value="" />
-          <Picker.Item label="A+" value="A+" />
-          <Picker.Item label="A-" value="A-" />
-          <Picker.Item label="B+" value="B+" />
-          <Picker.Item label="B-" value="B-" />
-          <Picker.Item label="O+" value="O+" />
-          <Picker.Item label="O-" value="O-" />
-          <Picker.Item label="AB+" value="AB+" />
-          <Picker.Item label="AB-" value="AB-" />
+          <Picker.Item label="A+" value="1" />
+          <Picker.Item label="A-" value="2" />
+          <Picker.Item label="B+" value="6" />
+          <Picker.Item label="B-" value="0" />
+          <Picker.Item label="O+" value="3" />
+          <Picker.Item label="O-" value="7" />
+          <Picker.Item label="AB+" value="4" />
+          <Picker.Item label="AB-" value="5" />
         </Picker>
       </View>
 
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Medical Condition</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter medical condition"
-          value={medicalCondition}
-          onChangeText={setMedicalCondition}
-        />
+        <Picker
+          style={styles.dropdownStyle}
+          selectedValue={medicalCondition}
+          onValueChange={setMedicalCondition}
+        >
+          <Picker.Item label="Select medical condition" value="" />
+          <Picker.Item label="Cancer" value="0" />
+          <Picker.Item label="Obesity" value="1" />
+          <Picker.Item label="Diabetes" value="2" />
+          <Picker.Item label="Asthma" value="3" />
+          <Picker.Item label="Hypertension" value="4" />
+          <Picker.Item label="Arthritis" value="5" />
+        </Picker>
       </View>
 
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Insurance Provider</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter insurance provider"
-          value={insuranceProvider}
-          onChangeText={setInsuranceProvider}
-        />
+        <Picker
+          style={styles.dropdownStyle}
+          selectedValue={insuranceProvider}
+          onValueChange={setInsuranceProvider}
+        >
+          <Picker.Item label="Select insurance provider" value="" />
+          <Picker.Item label="Blue Cross" value="0" />
+          <Picker.Item label="Medicare" value="1" />
+          <Picker.Item label="Aetna" value="2" />
+          <Picker.Item label="UnitedHealthcare" value="3" />
+          <Picker.Item label="Cigna" value="4" />
+        </Picker>
       </View>
 
       <View style={styles.inputContainer}>
@@ -262,22 +273,32 @@ const Predict = () => {
 
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Admission Type</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter admission type"
-          value={admissionType}
-          onChangeText={setAdmissionType}
-        />
+        <Picker
+          style={styles.dropdownStyle}
+          selectedValue={admissionType}
+          onValueChange={setAdmissionType}
+        >
+          <Picker.Item label="Select admission type" value="" />
+          <Picker.Item label="Urgent" value="0" />
+          <Picker.Item label="Emergency" value="1" />
+          <Picker.Item label="Elective" value="2" />
+        </Picker>
       </View>
 
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Medication</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter medication"
-          value={medication}
-          onChangeText={setMedication}
-        />
+        <Picker
+          style={styles.dropdownStyle}
+          selectedValue={medication}
+          onValueChange={setMedication}
+        >
+          <Picker.Item label="Select medication" value="" />
+          <Picker.Item label="Paracetamol" value="0" />
+          <Picker.Item label="Ibuprofen" value="1" />
+          <Picker.Item label="Aspirin" value="2" />
+          <Picker.Item label="Penicillin" value="3" />
+          <Picker.Item label="Lipitor" value="4" />
+        </Picker>
       </View>
 
       <View style={styles.inputContainer}>

@@ -1,13 +1,11 @@
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
-import { MaterialIcons, AntDesign } from "@expo/vector-icons";
-import { TouchableOpacity } from "react-native";
-import { useColorScheme } from "@/hooks/useColorScheme";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -30,7 +28,7 @@ export default function RootLayout() {
   }
 
   const logout = async () => {
-    await AsyncStorage.removeItem("token");
+    await AsyncStorage.removeItem("healthToken");
     router.push("/auth/");
   };
 
